@@ -58,56 +58,6 @@ title "Quantiles and 95% CIs for quantiles";
 proc print data=MedianCI;
 run;
 
-/* Question 4 Fisher's exact test*/
-title "Question 4";
-proc format;
-
-value treatment
- 0='std treatment'
- 1='new treatment';
-
-value condition
- 0='infected'
- 1='non-infected';
-run;
-
-data Clinicalstudy;
-input treatment condition Count;
-datalines;
-0 0 4
-0 1 112
-1 0 2
-1 1 114
-;
-run;
-
-proc print; run;
-ods output "Fisher's Exact Test"=Exact;
-proc freq data=Clinicalstudy order=data;
-format treatment treatment. condition condition.;
-tables treatment*condition / expected chisq relrisk;
-exact pchi or;
-weight Count;
-title í2x2 table analysis of CVD and salt intake dataí;
-run;
-
-
-data exact1; set exact;
-if _n_ in (2,3,5,6);
-drop Table Name1 nValue1;
-run;
-
-
-proc print data=exact1 noobs;
-title "Output of Fisher Exact Test";
-run;
-
-*Simpler code;
-proc freq data=Clinicalstudy;
-tables treatment*condition/exact;
-weight count;
-run;
-
 title "Question 2";
 /*Question 2a*/
 
@@ -368,6 +318,56 @@ run;
 options nodate nonumber;
 proc print data=Chisq noobs;
 title "Chisqure Test of 2x2 Contingency Table";
+run;
+
+/* Question 4 Fisher's exact test*/
+title "Question 4";
+proc format;
+
+value treatment
+ 0='std treatment'
+ 1='new treatment';
+
+value condition
+ 0='infected'
+ 1='non-infected';
+run;
+
+data Clinicalstudy;
+input treatment condition Count;
+datalines;
+0 0 4
+0 1 112
+1 0 2
+1 1 114
+;
+run;
+
+proc print; run;
+ods output "Fisher's Exact Test"=Exact;
+proc freq data=Clinicalstudy order=data;
+format treatment treatment. condition condition.;
+tables treatment*condition / expected chisq relrisk;
+exact pchi or;
+weight Count;
+title í2x2 table analysis of CVD and salt intake dataí;
+run;
+
+
+data exact1; set exact;
+if _n_ in (2,3,5,6);
+drop Table Name1 nValue1;
+run;
+
+
+proc print data=exact1 noobs;
+title "Output of Fisher Exact Test";
+run;
+
+*Simpler code;
+proc freq data=Clinicalstudy;
+tables treatment*condition/exact;
+weight count;
 run;
 
 /* Question 5 Two-way Anova method*/
