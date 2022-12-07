@@ -88,7 +88,7 @@ format treatment treatment. condition condition.;
 tables treatment*condition / expected chisq relrisk;
 exact pchi or;
 weight Count;
-title í2x2 table analysis of CVD and salt intake dataí;
+title Ã­2x2 table analysis of CVD and salt intake dataÃ­;
 run;
 
 
@@ -107,109 +107,7 @@ proc freq data=Clinicalstudy;
 tables treatment*condition/exact;
 weight count;
 run;
-/* Question 5 Two-way Anova method*/
-title "Question 5";
- data AA;
- input executives method $ conf;
- datalines;
-1 Utility 1.3
-1 Worry 4.8
-1 Comparison 9.2
-2 Utility 2.5
-2 Worry 6.9
-2 Comparison 14.4
-3 Utility 7.2
-3 Worry 9.1
-3 Comparison 16.5
-4 Utility 6.8
-4 Worry 13.2
-4 Comparison 17.6
-5 Utility 12.6
-5 Worry 13.6
-5 Comparison 15.5
 
-;
-run;
-
-options nodate nonumber;
-proc print; run;
-*ANOVA model without detergent and temperature interaction;
-
-proc glm data=aa;
- class executives method;
- model conf=method executives / ss1;
-run;
-Proc GLM data =AA;
-Class executives method;
-Model conf=executives method / ss1;
-CONTRAST 'Equality of confidence ratings among 1st and 3rd methods' method 1 0 -1;
-CONTRAST 'Equality of confidence ratings among 1st and 2nd methods' method 1 -1 0;
-CONTRAST 'Equality of confidence ratings among 2nd and 3rd methods' method 0 1 -1;
-CONTRAST 'Equality of confidence ratings among 1st and 2nd executives' executives 1 -1 0 0 0;
-CONTRAST 'Equality of confidence ratings among 1st and 3rd executives' executives 1 0 -1 0 0;
-CONTRAST 'Equality of confidence ratings among 1st and 4th executives' executives 1 0 0 -1 0;
-CONTRAST 'Equality of confidence ratings among 1st and 5th executives' executives 1 0 0 0 -1;
-CONTRAST 'Equality of confidence ratings among 2nd and 3rd executives' executives 0 1 -1 0 0;
-CONTRAST 'Equality of confidence ratings among 2nd and 4th executives' executives 0 1 0 -1 0;
-CONTRAST 'Equality of confidence ratings among 2nd and 5th executives' executives 0 1 0 0 -1;
-CONTRAST 'Equality of confidence ratings among 3rd and 4th executives' executives 0 0 1 -1 0;
-CONTRAST 'Equality of confidence ratings among 3rd and 5th executives' executives 0 0 1 0 -1;
-CONTRAST 'Equality of confidence ratings among 4th and 5th executives' executives 0 0 0 1 -1;
-title '2-Way ANOVA For Test Detergent and Temperature Effects';
-run;
-/*Question 3 Chisqure test for contingency table*/
-title "Question 3";
-proc format;
- value result 1='Yes'
- 2='No'
-	3='Uncertain';
- value gender 1='Women'
- 2='Men';
-run;
-
-proc format;
- value case 1='Case'
- 0='Noncase';
- value age 1='>=30'
- 0='<=29';
-run;
-
-data cancer;
- input gender result Count;
-
- datalines;
-1 1 125
-1 2 59
-1 3 21
-2 1 101
-2 2 79
-2 3 16
-;
-run;
-
-proc print data=cancer;
-run;
-
-ods trace on;
-ods output "Chi-Square Tests"=Chisquare;
-proc freq data=cancer order=data;
- format gender gender. result result.;
- tables gender*result / expected chisq relrisk nocol norow nopercent;
- weight Count;
- title 'Breast Cancer and Age of First Birth Study';
-run;
-ods trace off;
-
-*Chisqure test (with and without continuity correction);
-data Chisq; set chisquare;
-if statistic in ("Chi-Square","Continuity Adj. Chi-Square");
-drop table;
-run;
-
-options nodate nonumber;
-proc print data=Chisq noobs;
-title "Chisqure Test of 2x2 Contingency Table";
-run;
 title "Question 2";
 /*Question 2a*/
 
@@ -416,4 +314,109 @@ run;
 proc print data=Wscore;
 title1 "Wilcoxon Rank Sum Test---Score Output";
 title2 "Using Outout Deliveray System (ODS)";
+run;
+
+/*Question 3 Chisqure test for contingency table*/
+title "Question 3";
+proc format;
+ value result 1='Yes'
+ 2='No'
+	3='Uncertain';
+ value gender 1='Women'
+ 2='Men';
+run;
+
+proc format;
+ value case 1='Case'
+ 0='Noncase';
+ value age 1='>=30'
+ 0='<=29';
+run;
+
+data cancer;
+ input gender result Count;
+
+ datalines;
+1 1 125
+1 2 59
+1 3 21
+2 1 101
+2 2 79
+2 3 16
+;
+run;
+
+proc print data=cancer;
+run;
+
+ods trace on;
+ods output "Chi-Square Tests"=Chisquare;
+proc freq data=cancer order=data;
+ format gender gender. result result.;
+ tables gender*result / expected chisq relrisk nocol norow nopercent;
+ weight Count;
+ title 'Breast Cancer and Age of First Birth Study';
+run;
+ods trace off;
+
+*Chisqure test (with and without continuity correction);
+data Chisq; set chisquare;
+if statistic in ("Chi-Square","Continuity Adj. Chi-Square");
+drop table;
+run;
+
+options nodate nonumber;
+proc print data=Chisq noobs;
+title "Chisqure Test of 2x2 Contingency Table";
+run;
+
+/* Question 5 Two-way Anova method*/
+title "Question 5";
+ data AA;
+ input executives method $ conf;
+ datalines;
+1 Utility 1.3
+1 Worry 4.8
+1 Comparison 9.2
+2 Utility 2.5
+2 Worry 6.9
+2 Comparison 14.4
+3 Utility 7.2
+3 Worry 9.1
+3 Comparison 16.5
+4 Utility 6.8
+4 Worry 13.2
+4 Comparison 17.6
+5 Utility 12.6
+5 Worry 13.6
+5 Comparison 15.5
+
+;
+run;
+
+options nodate nonumber;
+proc print; run;
+*ANOVA model without detergent and temperature interaction;
+
+proc glm data=aa;
+ class executives method;
+ model conf=method executives / ss1;
+run;
+Proc GLM data =AA;
+Class executives method;
+Model conf=executives method / ss1;
+CONTRAST 'Equality of confidence ratings among 1st and 3rd methods' method 1 0 -1;
+CONTRAST 'Equality of confidence ratings among 1st and 2nd methods' method 1 -1 0;
+CONTRAST 'Equality of confidence ratings among 2nd and 3rd methods' method 0 1 -1;
+CONTRAST 'Equality of confidence ratings among 1st and 2nd executives' executives 1 -1 0 0 0;
+CONTRAST 'Equality of confidence ratings among 1st and 3rd executives' executives 1 0 -1 0 0;
+CONTRAST 'Equality of confidence ratings among 1st and 4th executives' executives 1 0 0 -1 0;
+CONTRAST 'Equality of confidence ratings among 1st and 5th executives' executives 1 0 0 0 -1;
+CONTRAST 'Equality of confidence ratings among 2nd and 3rd executives' executives 0 1 -1 0 0;
+CONTRAST 'Equality of confidence ratings among 2nd and 4th executives' executives 0 1 0 -1 0;
+CONTRAST 'Equality of confidence ratings among 2nd and 5th executives' executives 0 1 0 0 -1;
+CONTRAST 'Equality of confidence ratings among 3rd and 4th executives' executives 0 0 1 -1 0;
+CONTRAST 'Equality of confidence ratings among 3rd and 5th executives' executives 0 0 1 0 -1;
+CONTRAST 'Equality of confidence ratings among 4th and 5th executives' executives 0 0 0 1 -1;
+title '2-Way ANOVA For Test Detergent and Temperature Effects';
 run;
